@@ -1,0 +1,8 @@
+@PACKAGE_INIT@
+
+include("${CMAKE_CURRENT_LIST_DIR}/ElyLlamaTargets.cmake")
+
+set(TensorVia_INCLUDE_DIRS "@CMAKE_INSTALL_FULL_INCLUDEDIR@")
+set(TensorVia_LIBRARIES ElyLlama::ElyLlama)
+
+check_required_components(ElyLlama)
