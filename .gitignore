@@ -1,3 +1,11 @@
+# idea files
 .idea
-.output
+
+# install directory
+output
+
+# build files
 build*
+
+# model files
+models

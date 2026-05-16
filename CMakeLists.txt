@@ -7,9 +7,8 @@ endif ()
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-#set(CMAKE_CXX_SCAN_FOR_MODULES OFF)
-#set(CMAKE_EXPERIMENTAL_CXX_MODULE_DYNDEP 0)
 
 set(THIS_PROJECT_NAME "ElyLlama")
 
@@ -31,25 +30,25 @@ project(
 if (BACKEND_CPU)
     find_package(OpenMP REQUIRED)
     add_definitions(-DBACKEND_CPU)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -mavx2 -mf16c -mfma -fopenmp ")
+    if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0 -mavx2 -mf16c -mfma -fopenmp")
+    else ()
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -mavx2 -mf16c -mfma -fopenmp")
+    endif ()
 endif ()
 
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib)
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/bin")
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/lib")
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/lib")
 
 # ------------------------- Necessary Header Files Directories -------------------------
 include_directories(
-        ${PROJECT_SOURCE_DIR}/include
-        ${PROJECT_SOURCE_DIR}/include/core
-        ${PROJECT_SOURCE_DIR}/include/backend
-        ${PROJECT_SOURCE_DIR}/include/model
-        ${PROJECT_SOURCE_DIR}/include/utils
+        "${PROJECT_SOURCE_DIR}/include"
 )
 
 # Backend header files directories
 if (BACKEND_CPU)
-    include_directories(${PROJECT_SOURCE_DIR}/include/backend/cpu)
+    include_directories("${PROJECT_SOURCE_DIR}/include/backend/cpu")
 endif ()
 
 # ------------------------- Source Files Collection -------------------------
@@ -59,9 +58,11 @@ file(GLOB SRC_FILES
         "${PROJECT_SOURCE_DIR}/src/core/*.cpp"
         "${PROJECT_SOURCE_DIR}/src/model/*.cpp"
         "${PROJECT_SOURCE_DIR}/src/backend/*.cpp"
-        #        "${PROJECT_SOURCE_DIR}/src/backend/cpu/*.cpp"
-        #        "${PROJECT_SOURCE_DIR}/src/backend/backend_cpu.cpp"
 )
+
+# ------------------------- Third Party Libraries -------------------------
+include_directories("${PROJECT_SOURCE_DIR}/external/nlohmann_json/include")
+include_directories("${PROJECT_SOURCE_DIR}/external/cxxopt/include")
 
 # ------------------------- Main Library Build -------------------------
 add_library(${PROJECT_NAME} STATIC ${SRC_FILES})
@@ -87,12 +88,6 @@ install(TARGETS ${PROJECT_NAME}
         ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
         RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
-
-#install(
-#        FILES
-#        ${PROJECT_SOURCE_DIR}/include/3rd/json.hpp
-#        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/ElyLlama/3rd
-#)
 
 install(
         DIRECTORY ${PROJECT_SOURCE_DIR}/include/core/
@@ -149,6 +144,7 @@ if (BUILD_TEST)
     file(GLOB TEST_FILES "${PROJECT_SOURCE_DIR}/tests/*.cpp")
     foreach (test_file ${TEST_FILES})
         get_filename_component(test_name ${test_file} NAME_WE)
+        set(test_name "test_${test_name}")
         add_executable(${test_name} ${test_file})
         target_link_libraries(${test_name} PRIVATE ${PROJECT_NAME})
         target_include_directories(${test_name} PRIVATE ${INCLUDE_DIRS})
