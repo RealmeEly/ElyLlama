@@ -9,7 +9,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-
 set(THIS_PROJECT_NAME "ElyLlama")
 
 option(BUILD_TEST "build test file with ./tests/*.cpp" ON)
@@ -59,6 +58,13 @@ file(GLOB SRC_FILES
         "${PROJECT_SOURCE_DIR}/src/model/*.cpp"
         "${PROJECT_SOURCE_DIR}/src/backend/*.cpp"
 )
+
+if (BACKEND_CPU)
+    file(GLOB_RECURSE CPU_SOURCES
+            "${PROJECT_SOURCE_DIR}/src/core/cpu/*.cpp"
+            "${PROJECT_SOURCE_DIR}/src/backend/cpu/*.cpp"
+    )
+endif ()
 
 # ------------------------- Third Party Libraries -------------------------
 include_directories("${PROJECT_SOURCE_DIR}/external/nlohmann_json/include")

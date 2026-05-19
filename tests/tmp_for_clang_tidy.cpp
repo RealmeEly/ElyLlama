@@ -1,0 +1,10 @@
+// ReSharper disable CppUnusedIncludeDirective
+// Used for clang-tidy
+#include "backend/backend.h"
+#include "core/gguf_parser.h"
+#include "core/graph.h"
+#include "core/resource.h"
+#include "core/tensor.hpp"
+#include "core/cpu/resource_cpu.h"
+#include "utils/fp16.hpp"
+#include "utils/type.hpp"
