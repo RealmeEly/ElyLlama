@@ -53,9 +53,7 @@ namespace core {
     }
 
     // Calculate static nbytes
-    [[nodiscard]] size_t nbytes() const {
-      return numel() * dataTypeSize(dtype);
-    }
+    [[nodiscard]] size_t nbytes() const { return numel() * dataTypeSize(dtype); }
 
     // Calculate dynamic nbytes
     [[nodiscard]] size_t nbytesAt(const int64_t resolve) const {
@@ -68,11 +66,10 @@ namespace core {
 
     // Return whether tensor is an operator
     [[nodiscard]] bool isComputed() const {
-      return op_type != OperationType::OP_TYPE_NONE &&
-             type != TensorType::TENSOR_TYPE_WEIGHT &&
-             type != TensorType::TENSOR_TYPE_INPUT;
+      return op_type != OperationType::OP_TYPE_NONE && type != TensorType::TENSOR_TYPE_WEIGHT && type !=
+             TensorType::TENSOR_TYPE_INPUT;
     }
   };
 } // namespace core
 
-#endif //TENSOR_H
+#endif // TENSOR_H

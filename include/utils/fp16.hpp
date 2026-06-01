@@ -9,19 +9,17 @@
 #include <cstdint>
 #include <iostream>
 
+// ReSharper disable once CppInconsistentNaming
 class float16_t { // NOLINT(*-identifier-naming)
 private:
   uint16_t bits;
 
-  struct FromBitsT {
-  };
+  struct FromBitsT {};
 
-  constexpr float16_t(uint16_t b, FromBitsT):
-    bits(b) {
-  }
+  constexpr float16_t(uint16_t b, FromBitsT) : bits(b) {}
 
   // Convert float32 to float16 (with rounding)
-  static constexpr uint16_t float2Fp16bits(float f) {
+  static constexpr uint16_t float2Fp16Bits(float f) {
     const auto fp32_uint32 = std::bit_cast<uint32_t>(f);
     const uint32_t sign = (fp32_uint32 >> 31) & 0x1;
     const uint32_t exp = (fp32_uint32 >> 23) & 0xFF;
@@ -57,11 +55,10 @@ private:
       }
     }
     return (sign << 15) | (exp_adj << 10) | static_cast<uint16_t>(combined_mant);
-
   }
 
   // Convert float16 to float32
-  static constexpr float fp16bits2Float(uint16_t fp16_bits) {
+  static constexpr float fp16Bits2Float(uint16_t fp16_bits) {
     const uint32_t sign = (fp16_bits >> 15) & 0x1;
     uint32_t exp = (fp16_bits >> 10) & 0x1F;
     uint32_t mant = fp16_bits & 0x3FF;
@@ -88,42 +85,25 @@ private:
 
 public:
   // NOLINTBEGIN(*-explicit-constructor)
-  constexpr float16_t():
-    bits(0) {
-  }
+  constexpr float16_t() : bits(0) {}
 
   // ReSharper disable once CppDFAUnreachableFunctionCall
-  constexpr float16_t(float f):
-    bits(float2Fp16bits(f)) {
-  }
+  constexpr float16_t(float f) : bits(float2Fp16Bits(f)) {}
 
-  constexpr float16_t(double d):
-    float16_t(static_cast<float>(d)) {
-  }
+  constexpr float16_t(double d) : float16_t(static_cast<float>(d)) {}
 
-  constexpr float16_t(int8_t d) :
-    float16_t(static_cast<float>(d)) {
-  }
+  constexpr float16_t(int8_t d) : float16_t(static_cast<float>(d)) {}
 
-  constexpr float16_t(int16_t d) :
-    float16_t(static_cast<float>(d)) {
-  }
+  constexpr float16_t(int16_t d) : float16_t(static_cast<float>(d)) {}
 
-  constexpr float16_t(int32_t d) :
-    float16_t(static_cast<float>(d)) {
-  }
+  constexpr float16_t(int32_t d) : float16_t(static_cast<float>(d)) {}
 
-  constexpr float16_t(int64_t d) :
-    float16_t(static_cast<float>(d)) {
-  }
+  constexpr float16_t(int64_t d) : float16_t(static_cast<float>(d)) {}
 
-
-  static constexpr float16_t fromBits(uint16_t b) {
-    return float16_t{b, FromBitsT{}};
-  }
+  static constexpr float16_t fromBits(uint16_t b) { return float16_t{b, FromBitsT{}}; }
 
   // Conversion
-  constexpr operator float() const { return fp16bits2Float(bits); }
+  constexpr operator float() const { return fp16Bits2Float(bits); }
   explicit constexpr operator double() const { return static_cast<float>(*this); }
 
   [[nodiscard]] constexpr uint16_t getBits() const { return bits; }
@@ -233,4 +213,4 @@ public:
 };
 #endif
 
-#endif //FP16_HPP
+#endif // FP16_HPP

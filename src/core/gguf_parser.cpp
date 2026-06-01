@@ -3,7 +3,6 @@
 #include <iostream>
 
 namespace core {
-
   size_t TensorInfo::bytes() const {
     const size_t elem_size = dataTypeSize(dtype);
     size_t num_elems = 1;
@@ -14,20 +13,20 @@ namespace core {
   }
 
   void GGUFInfo::printInfo() const {
-    std::cout << std::format("{:-<14}GGUF file infomation{:-<14}", "", "") << "\n";
-    std::cout << std::format("gguf version:             {}", version) << "\n";
-    std::cout << std::format("model arch:               {}", getModelArchitecture()) << "\n";
-    std::cout << std::format("model name:               {}", getModelName()) << "\n";
-    std::cout << std::format("kv_count:                 {}", meta_data_kv_count) << "\n";
-    std::cout << std::format("tensor_count:             {}", tensor_count) << "\n";
-    std::cout << std::format("data_offset:              {}", offset) << "\n";
-    std::cout << std::format("{:-<26} {:-<8} {:-<14}", "", "", "") << "\n";
-    std::cout << std::format("{:<26} {:<8} {}", "name", "data_type", "dimension") << "\n";
-    std::cout << std::format("{:-<26} {:-<8} {:-<14}", "", "", "") << "\n";
+    std::println(std::cout, "{:-<14}GGUF file infomation{:-<14}", "", "");
+    std::println(std::cout, "gguf version:             {}", version);
+    std::println(std::cout, "model arch:               {}", getModelArchitecture());
+    std::println(std::cout, "model name:               {}", getModelName());
+    std::println(std::cout, "kv_count:                 {}", meta_data_kv_count);
+    std::println(std::cout, "tensor_count:             {}", tensor_count);
+    std::println(std::cout, "data_offset:              {}", offset);
+    std::println(std::cout, "{:-<26} {:-<8} {:-<14}", "", "", "");
+    std::println(std::cout, "{:<26} {:<8} {}", "name", "data_type", "dimension");
+    std::println(std::cout, "{:-<26} {:-<8} {:-<14}", "", "", "");
     for (const auto& info : tensor_info_vec) {
-      std::cout << std::format("{:<26} {:<8} {}", info.name, dataTypeToString(info.dtype), info.dimensions) << "\n";
+      std::println(std::cout, "{:<26} {:<8} {}", info.name, dataTypeToString(info.dtype), info.dimensions);
     }
-    std::cout << std::format("{:-<26} {:-<8} {:-<14}", "", "", "") << "\n";
+    std::println(std::cout, "{:-<26} {:-<8} {:-<14}", "", "", "");
   }
 
   std::string GGUFInfo::getModelName() const {
@@ -84,7 +83,7 @@ namespace core {
 
     if (info.version != 3) {
       throw std::runtime_error(
-          "Unsupported GGUF version: " + std::to_string(info.version) + " (only version 3 is supported)");
+        "Unsupported GGUF version: " + std::to_string(info.version) + " (only version 3 is supported)");
     }
 
     info.meta_data = parseMetadata(info.meta_data_kv_count);
@@ -171,41 +170,41 @@ namespace core {
 
   Json GGUFParser::readMetadataValue(const GGUFType type) { // NOLINT(*-no-recursion)
     switch (type) {
-    case GGUFType::GGUF_TYPE_BOOL:
-      return readUint8Len() != 0;
-    case GGUFType::GGUF_TYPE_UINT8:
-      return readUint8Len();
-    case GGUFType::GGUF_TYPE_INT8:
-      return static_cast<int8_t>(readUint8Len());
-    case GGUFType::GGUF_TYPE_UINT16:
-      return readUint16Len();
-    case GGUFType::GGUF_TYPE_INT16:
-      return static_cast<int16_t>(readUint16Len());
-    case GGUFType::GGUF_TYPE_UINT32:
-      return readUint32Len();
-    case GGUFType::GGUF_TYPE_INT32:
-      return static_cast<int32_t>(readUint32Len());
-    case GGUFType::GGUF_TYPE_FLOAT32:
-      return readFloat32Len();
-    case GGUFType::GGUF_TYPE_UINT64:
-      return readUint64Len();
-    case GGUFType::GGUF_TYPE_INT64:
-      return static_cast<int64_t>(readUint64Len());
-    case GGUFType::GGUF_TYPE_FLOAT64:
-      return readFloat64Len();
-    case GGUFType::GGUF_TYPE_STRING:
-      return readString();
-    case GGUFType::GGUF_TYPE_ARRAY: {
-      const uint32_t elem_type = readUint32Len();
-      const uint64_t arr_len = readUint64Len();
-      Json arr = Json::array();
-      for (uint64_t i = 0; i < arr_len; ++i) {
-        arr.push_back(readMetadataValue(static_cast<GGUFType>(elem_type)));
+      case GGUFType::GGUF_TYPE_BOOL:
+        return readUint8Len() != 0;
+      case GGUFType::GGUF_TYPE_UINT8:
+        return readUint8Len();
+      case GGUFType::GGUF_TYPE_INT8:
+        return static_cast<int8_t>(readUint8Len());
+      case GGUFType::GGUF_TYPE_UINT16:
+        return readUint16Len();
+      case GGUFType::GGUF_TYPE_INT16:
+        return static_cast<int16_t>(readUint16Len());
+      case GGUFType::GGUF_TYPE_UINT32:
+        return readUint32Len();
+      case GGUFType::GGUF_TYPE_INT32:
+        return static_cast<int32_t>(readUint32Len());
+      case GGUFType::GGUF_TYPE_FLOAT32:
+        return readFloat32Len();
+      case GGUFType::GGUF_TYPE_UINT64:
+        return readUint64Len();
+      case GGUFType::GGUF_TYPE_INT64:
+        return static_cast<int64_t>(readUint64Len());
+      case GGUFType::GGUF_TYPE_FLOAT64:
+        return readFloat64Len();
+      case GGUFType::GGUF_TYPE_STRING:
+        return readString();
+      case GGUFType::GGUF_TYPE_ARRAY: {
+        const uint32_t elem_type = readUint32Len();
+        const uint64_t arr_len = readUint64Len();
+        Json arr = Json::array();
+        for (uint64_t i = 0; i < arr_len; ++i) {
+          arr.push_back(readMetadataValue(static_cast<GGUFType>(elem_type)));
+        }
+        return arr;
       }
-      return arr;
-    }
-    default:
-      throw std::runtime_error("Unsupported GGUF metadata type: " + ggufTypeToString(type));
+      default:
+        throw std::runtime_error("Unsupported GGUF metadata type: " + ggufTypeToString(type));
     }
   }
 
@@ -218,8 +217,7 @@ namespace core {
     return meta_data;
   }
 
-  std::vector<TensorInfo>
-  GGUFParser::parseTensorInfoVector(const uint64_t tensor_count) {
+  std::vector<TensorInfo> GGUFParser::parseTensorInfoVector(const uint64_t tensor_count) {
     std::vector<TensorInfo> tensor_info_vec;
     tensor_info_vec.reserve(tensor_count);
     for (uint64_t i = 0; i < tensor_count; ++i) {
@@ -236,5 +234,4 @@ namespace core {
     }
     return tensor_info_vec;
   }
-
 } // namespace core

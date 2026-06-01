@@ -9,20 +9,14 @@ namespace core {
 
   public:
     // ReSharper disable once CppParameterMayBeConst
-    explicit CpuMemoryResource(bool lock = false):
-      lock_memory(lock) {
-    }
+    explicit CpuMemoryResource(bool lock = false) : lock_memory(lock) {}
 
     void* allocate(size_t size, size_t alignment) override;
-
     void deallocate(void* data_ptr, size_t size) override;
-
     [[nodiscard]] size_t getId() const override { return 0; }
-
     [[nodiscard]] Device getDevice() const override { return Device::CPU; }
-
     [[nodiscard]] bool getLockMemory() const { return lock_memory; }
   };
 } // namespace core
 
-#endif //RESOURCE_CPU_H
+#endif // RESOURCE_CPU_H

@@ -14,7 +14,6 @@
 #endif
 
 namespace core {
-
   void* CpuMemoryResource::allocate(size_t size, size_t alignment) {
     if (size == 0) {
       return nullptr;
@@ -28,18 +27,19 @@ namespace core {
     }
 #else
     if (posix_memalign(&ptr, alignment, size) != 0) {
-      throw std::runtime_error(std::format("CpuMemoryResource: posix_memalign {} bytes (align={}) failed", size, alignment));
+      throw std::runtime_error(
+          std::format("CpuMemoryResource: posix_memalign {} bytes (align={}) failed", size, alignment));
     }
 #endif
 
     if (lock_memory) {
 #if defined(_WIN32)
       if (VirtualLock(data_ptr, size) == 0) {
-        std::cout << std::format("[warn] VirtualLock {} bytes failed, continuing without lock\n", size);
+        std::println(std::cout, "[warn] VirtualLock {} bytes failed, continuing without lock", size);
       }
 #else
       if (mlock(ptr, size) != 0) {
-        std::cout<<std::format("[warn] mlock {} bytes failed (try: ulimit -l unlimited), continuing without lock\n", size);
+        std::println(std::cout, "[warn] mlock {} bytes failed (try: ulimit -l unlimited), continuing without lock", size);
       }
 #endif
     }
@@ -66,6 +66,6 @@ namespace core {
     free(data_ptr);
 #endif
 
-    std::cout << std::format("Deallocated {} bytes on CPU\n", size);
+    std::println(std::cout, "Deallocated {} bytes on CPU", size);
   }
 } // namespace core

@@ -2,10 +2,8 @@
 #define GGUF_PARSER_H
 
 #include "utils/type.hpp"
-
-#include "nlohmann/json.hpp"
-
 #include <fstream>
+#include <nlohmann/json.hpp>
 
 namespace core {
   using Json = nlohmann::ordered_json;

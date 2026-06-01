@@ -14,16 +14,12 @@ namespace core {
   public:
     virtual ~MemoryResourceInterface() = default;
 
-    virtual void* allocate(size_t size, size_t alignment) =0;
-
-    virtual void deallocate(void* data_ptr, size_t size) =0;
-
-    [[nodiscard]] virtual size_t getId() const =0;
-
-    [[nodiscard]] virtual Device getDevice() const =0;
-
+    virtual void* allocate(size_t size, size_t alignment) = 0;
+    virtual void deallocate(void* data_ptr, size_t size) = 0;
+    [[nodiscard]] virtual size_t getId() const = 0;
+    [[nodiscard]] virtual Device getDevice() const = 0;
     [[nodiscard]] virtual size_t getDeviceHandle() const { return 0; }
   };
 } // namespace core
 
-#endif //RESOURCE_H
+#endif // RESOURCE_H

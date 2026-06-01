@@ -18,4 +18,4 @@ namespace core {
   };
 } // namespace core
 
-#endif //GRAPH_H
+#endif // GRAPH_H
