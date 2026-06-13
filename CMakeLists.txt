@@ -25,14 +25,26 @@ project(
         VERSION 0.1.0
 )
 
+find_library(STDCXX_EXP_LIB stdc++exp)
+
 # CPU config: avx2，openmp, fma
 if (BACKEND_CPU)
     find_package(OpenMP REQUIRED)
     add_definitions(-DBACKEND_CPU)
-    if (CMAKE_BUILD_TYPE STREQUAL "Debug")
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0 -mavx2 -mf16c -mfma -fopenmp")
+
+    if (NOT MSVC)
+        if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+            set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0 -mavx2 -mf16c -mfma -fopenmp")
+        else ()
+            set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -mavx2 -mf16c -mfma -fopenmp")
+        endif ()
     else ()
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -mavx2 -mf16c -mfma -fopenmp")
+        add_compile_options(/arch:AVX2)
+        if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+            add_compile_options(/Od)
+        else ()
+            add_compile_options(/O2)
+        endif ()
     endif ()
 endif ()
 
@@ -80,6 +92,10 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
 
 if (BACKEND_CPU AND OpenMP_CXX_FOUND)
     target_link_libraries(${PROJECT_NAME} PRIVATE OpenMP::OpenMP_CXX)
+endif ()
+
+if (STDCXX_EXP_LIB)
+    target_link_libraries(${PROJECT_NAME} PUBLIC stdc++exp)
 endif ()
 
 add_library(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
@@ -158,6 +174,7 @@ if (BUILD_TEST)
         if (BACKEND_CPU)
             target_link_libraries(${test_name} PRIVATE OpenMP::OpenMP_CXX)
         endif ()
+
         add_test(NAME ${test_name} COMMAND ${test_name})
     endforeach ()
 endif ()

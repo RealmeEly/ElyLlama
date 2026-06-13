@@ -8,3 +8,7 @@
 #include "core/tensor.hpp"
 #include "utils/fp16.hpp"
 #include "utils/type.hpp"
+
+int main() {
+  return 0;
+}
